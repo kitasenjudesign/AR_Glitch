@@ -33,7 +33,9 @@ Shader "Unlit/ProjObj"
 			struct v2f
 			{
 				float4 uv : TEXCOORD0;
+				float4 col : TEXCOORD1;
 				float4 screenPos : TEXCOORD2;
+				
 				UNITY_FOG_COORDS(1)
 				float4 vertex : SV_POSITION;
 			};
@@ -69,7 +71,7 @@ Shader "Unlit/ProjObj"
 			{
 				v2f o;
 				
-
+				/*
 				float3 vv = v.vertex.xyz;
 				//float yy = 1 + 6 * (0.5 + 0.5 * sin(_ScaleY-3.1415/2));
 				//vv.y = sign(vv.y) * 0.5 * pow( abs( vv.y )*2, 1/yy ) * yy;
@@ -81,7 +83,7 @@ Shader "Unlit/ProjObj"
 				float dAmp	= snoise( vv.xyz * 1.6 + _Time.y ) * _Amp;            
 				float dRadX	= sin( vv.y + _Time.z) * 0.1;// * _RotAmount;//横方向の角度
 				
-				amp += 0;//dAmp;// * step(_Th,dAmp);// * _DeformRatio;
+				//amp += dAmp;// * step(_Th,dAmp);// * _DeformRatio;
 				//radX 	+= dRadX;
 
 				//amp = lerp(amp,_Limit,_Sphere);
@@ -92,9 +94,14 @@ Shader "Unlit/ProjObj"
 				vv.z = amp * cos( radX ) * cos( radY );//横
 
 				v.vertex.xyz = vv.xyz;
-				o.vertex = UnityObjectToClipPos(v.vertex);
+				*/
 
+				float3 vvv = v.vertex.xyz;
+				if( v.uv.x > 0){
+					vvv.y += abs( snoise(vvv*14 + float3(floor(_Time.z*1),0,0)) );
+				}
 
+				o.vertex = UnityObjectToClipPos(vvv);
 
 
 				float4 worldPos = mul(_modelMat,float4(v.vertex.xyz, 1.0));
@@ -106,6 +113,9 @@ Shader "Unlit/ProjObj"
 				//uv.y = 1 - uv.y;
 				//o.tangent = float4(uv,0,0);
 				o.screenPos = screenPos;
+
+				fixed4 uvv = fixed4(screenPos.xy/screenPos.w,0,0);
+				o.col = tex2Dlod(_MainTex,uvv);
 				
 				//mul(_tMat, projPos);//TRANSFORM_TEX(v.uv, _MainTex);
 
@@ -132,9 +142,10 @@ Shader "Unlit/ProjObj"
 
 				//fixed4 col =tex2D(_MainTex, i.tangent.xy / i.tangent.w);
 				fixed4 col = tex2D( _MainTex, uv);//i.tangent.xy );
+				//fixed4 col = fixed4(i.col.rgb,1.0);
 				
 				// apply fog
-				UNITY_APPLY_FOG(i.fogCoord, col);
+				//UNITY_APPLY_FOG(i.fogCoord, col);
 				return col;
 			}
 			ENDCG

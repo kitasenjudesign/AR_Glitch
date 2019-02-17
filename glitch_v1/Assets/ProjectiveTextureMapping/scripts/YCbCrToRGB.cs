@@ -7,20 +7,23 @@ public class YCbCrToRGB : MonoBehaviour {
 
     [SerializeField] private RenderTexture _rgbTexture;
     [SerializeField] private UnityARVideo _unityArVideo;
-    
     [SerializeField] private Shader _yCbCrShader;
-
     private Material _mat;
+    public static RenderTexture staticTex;
 
     //[SerializeField] private Material _faceMat;
 
     void Start(){
-        //Material material = new
-
-        //Graphics.Blit();
-        //var m = new Material()
+        
         _mat = new Material(_yCbCrShader);
-        //blit wo kaku
+        Init(_rgbTexture);
+
+    }
+
+    public static void Init(RenderTexture tex){
+        
+        staticTex = tex;
+        
     }
 
     void Update(){

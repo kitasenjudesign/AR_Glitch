@@ -50,6 +50,13 @@ public class UnityARCameraManager : MonoBehaviour {
         }
     }
 
+    //
+    void OnGUI(){
+
+        
+
+    }
+
     // Use this for initialization
     void Start () {
 

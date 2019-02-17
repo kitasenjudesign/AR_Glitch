@@ -14,7 +14,10 @@ public class ProjDrawMeshes : DrawMeshInstancedBase {
     private Matrix4x4[] _viewMats;
     private Matrix4x4[] _projMats;
 
-    private RenderTexture _renderTexture;
+    private RenderTexture _renderTexture;//これが２個あればいいのか
+    
+    private bool _isInit = false;
+
 
     void Awake(){
         gameObject.SetActive(false);
@@ -25,9 +28,12 @@ public class ProjDrawMeshes : DrawMeshInstancedBase {
         _projMats = new Matrix4x4[MAX];
         _data = new ProjDrawData[MAX];
         _renderTexture = new RenderTexture(Screen.width,Screen.height,0);
+
     }
 
-    public void Init(Matrix4x4 projMat, Matrix4x4 viewMat, RenderTexture srcTex, float baseScale){
+    public void Init(Matrix4x4 projMat, Matrix4x4 viewMat, float baseScale){
+
+        _isInit=true;
 
         //_count = 300;
         for(int i=0;i<_count;i++){
@@ -54,37 +60,26 @@ public class ProjDrawMeshes : DrawMeshInstancedBase {
             );
             
         }
-
-		gameObject.SetActive(true);
-
-		//_mat = _renderer.localToWorldMatrix;
-		
-		Graphics.Blit( srcTex,_renderTexture);
-
-		_mat.SetTexture("_MainTex", _renderTexture);
-
-		_propertyBlock.SetMatrixArray("_ModelMat", _modelMats );
-		_propertyBlock.SetMatrixArray("_ProjMat", 	_projMats);//_projectionCam.projectionMatrix );
-		_propertyBlock.SetMatrixArray("_ViewMat", 	_viewMats);
         
     }
 
+    public void Capture(RenderTexture srcTex){
 
+		//gameObject.SetActive(false);
+		Graphics.Blit( srcTex,_renderTexture);/////
+		//gameObject.SetActive(true);
 
-
-
-
-
+    }
 
     void Update(){
 
-        if(_modelMats==null)return;
-
+        if(_modelMats==null) return;
+        if(!_isInit) return;
         //Debug.Log(_modelMats.Length);
 
         for (int i = 0; i < _count; i++)
         {
-            
+            //TRS
             _modelMats[i].SetTRS( 
                 _data[i].pos,
                 _data[i].rot,
@@ -94,6 +89,11 @@ public class ProjDrawMeshes : DrawMeshInstancedBase {
             
         }
 
+		_mat.SetTexture("_MainTex", _renderTexture);
+
+		_propertyBlock.SetMatrixArray("_ModelMat", _modelMats);
+		_propertyBlock.SetMatrixArray("_ProjMat", 	_projMats);//_projectionCam.projectionMatrix );
+		_propertyBlock.SetMatrixArray("_ViewMat", 	_viewMats);
         _propertyBlock.SetMatrixArray("_ModelMat", _modelMats);
 
         Graphics.DrawMeshInstanced(

@@ -9,7 +9,7 @@ public class DrawMeshInstancedBase : MonoBehaviour {
     
     protected Vector4[] _colors;
     protected MaterialPropertyBlock _propertyBlock;
-    protected int _count = 400;
+    protected int _count = 300;
     protected void Init(){
 
     }

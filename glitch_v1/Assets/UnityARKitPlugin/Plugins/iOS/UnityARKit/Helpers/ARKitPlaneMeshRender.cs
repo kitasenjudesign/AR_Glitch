@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.iOS;
+using Torec;
+
 
 public class ARKitPlaneMeshRender : MonoBehaviour {
 
@@ -30,8 +32,17 @@ public class ARKitPlaneMeshRender : MonoBehaviour {
 		        planeMesh.Clear();
 	        }
 	        
+
+
             planeMesh.vertices = arPlaneAnchor.planeGeometry.vertices;
             planeMesh.uv = arPlaneAnchor.planeGeometry.textureCoordinates;
+
+			//画像をキャプチャする
+			var obj = GetComponent<ProjObj>();
+			if(obj!=null) obj.Capture();
+
+
+			
             planeMesh.triangles = arPlaneAnchor.planeGeometry.triangleIndices;
 
             lineRenderer.positionCount = arPlaneAnchor.planeGeometry.boundaryVertexCount;
@@ -39,7 +50,25 @@ public class ARKitPlaneMeshRender : MonoBehaviour {
 
             // Assign the mesh object and update it.
             planeMesh.RecalculateBounds();
-            planeMesh.RecalculateNormals();
+            //planeMesh.RecalculateNormals();
+
+			//
+			Debug.LogWarning("前"+planeMesh.vertices.Length);
+			int iter = 2;
+			//var m_boundaryInterpolation = 
+		    planeMesh= CatmullClark.Subdivide(planeMesh, iter, new CatmullClark.Options {
+                boundaryInterpolation = CatmullClark.Options.BoundaryInterpolation.normal,
+            });
+			planeMesh.uv = BorderCheck.GetBorder(
+				planeMesh.uv,
+				planeMesh.vertices,
+				arPlaneAnchor.planeGeometry.boundaryVertices
+			);
+			Debug.LogWarning("後"+planeMesh.vertices.Length);
+
+
+			meshFilter.mesh = planeMesh;
+
         }
 
 	}

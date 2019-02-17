@@ -3,6 +3,7 @@ Shader "Unlit/FullScreenQuad"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		//_IsHanten ("_isHanten", float ) = 0
 	}
 	SubShader
 	{
@@ -35,7 +36,8 @@ Shader "Unlit/FullScreenQuad"
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			
+			float _GlobalInvert;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -55,6 +57,10 @@ Shader "Unlit/FullScreenQuad"
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// sample the texture
+				if(_GlobalInvert == 1){
+					i.uv.y = 1 - i.uv.y;
+				}
+
 				fixed4 col = tex2D(_MainTex, i.uv);
 				// apply fog
 				//UNITY_APPLY_FOG(i.fogCoord, col);

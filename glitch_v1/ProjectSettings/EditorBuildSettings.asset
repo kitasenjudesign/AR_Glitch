@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UnityARKitPlugin/Examples/UnityAROcclusion/UnityAROcclusion.unity
     guid: 7f026c59fb9d6489ab924c6e0e119760
-  - enabled: 1
+  - enabled: 0
     path: Assets/ProjectiveTextureMapping/scene/ARProjection.unity
     guid: 269f5c6acfd694c3e8b7bb02ed364b61
   - enabled: 0
@@ -50,3 +50,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/UnityARKitPlugin/Examples/ARKit2.0/UnityARObjectAnchor/UnityARObjectAnchor.unity
     guid: 9b7966300d2d04d8e86ace41d59d178c
+  - enabled: 1
+    path: Assets/ProjectiveTextureMapping/scene/PlaneTest.unity
+    guid: 3768355975a2545488bc547f9f8314d1

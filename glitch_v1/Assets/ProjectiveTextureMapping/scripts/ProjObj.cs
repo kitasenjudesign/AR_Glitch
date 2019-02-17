@@ -7,7 +7,8 @@ using UnityEngine.XR.iOS;
 
 public class ProjObj : MonoBehaviour {
 
-	[SerializeField] private UnityARVideo _arVideo;
+	//[SerializeField] private UnityARVideo _arVideo;
+	[SerializeField] private RenderTexture _srcTex;
 	private MeshRenderer _renderer;
 	private MaterialPropertyBlock _propertyBlock;
 
@@ -41,12 +42,22 @@ public class ProjObj : MonoBehaviour {
 		_propertyBlock = new MaterialPropertyBlock();
 		_renderer =GetComponent<MeshRenderer>();
 		
-		
+		_renderTexture = new RenderTexture(
+			Mathf.FloorToInt(Screen.width*0.5f),
+			Mathf.FloorToInt(Screen.height*0.5f),0
+		);
 
 		gameObject.SetActive(false);
 
 	}
 	
+	public void Capture(){
+		//Debug.Log("Capture");
+		var projMat = Camera.main.projectionMatrix;
+		var viewMat = Camera.main.worldToCameraMatrix;
+		Init(projMat,viewMat,_srcTex);
+	}
+
 
 	public void Init(Matrix4x4 projMat, Matrix4x4 viewMat, RenderTexture srcTex){
 		
@@ -54,19 +65,16 @@ public class ProjObj : MonoBehaviour {
 		_projMat = projMat;
 		_viewMat = viewMat;
 
-
 		gameObject.SetActive(true);
 
 		//_mat = _renderer.localToWorldMatrix;
 		_modelMat = transform.localToWorldMatrix;
 		if(_propertyBlock!=null){
 
-			_renderTexture = new RenderTexture(Screen.width,Screen.height,0);
+			
 			Graphics.Blit( srcTex,_renderTexture);
 
-			_propertyBlock.SetTexture("_MainTex", _renderTexture);
 			_propertyBlock.SetMatrix("_modelMat", _modelMat );
-
 			_propertyBlock.SetMatrix("_tMat", 		_tMat );
 			_propertyBlock.SetMatrix("_projMat", 	_projMat);//_projectionCam.projectionMatrix );
 			_propertyBlock.SetMatrix("_viewMat", 	_viewMat);
@@ -87,11 +95,6 @@ public class ProjObj : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if(_propertyBlock!=null){
-			
-			//_propertyBlock.SetFloat("_ScaleY", 		_scaleY );
-			//_scaleY += 0.01f;
-		}
 		if(_renderer!=null) _renderer.SetPropertyBlock(_propertyBlock);
 		//transform.Rotate(_rotSpeed);
 

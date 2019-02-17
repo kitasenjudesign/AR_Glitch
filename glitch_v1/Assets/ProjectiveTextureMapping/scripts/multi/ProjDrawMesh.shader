@@ -48,7 +48,8 @@ Shader "Unlit/ProjDrawMesh"
 			//float _ScaleY;
 			float _Amp;
 			float4 _MainTex_ST;
-			
+			float _GlobalInvert = 0;
+
             UNITY_INSTANCING_CBUFFER_START(Props)
                 UNITY_DEFINE_INSTANCED_PROP(fixed4, _Color) // Make _Color an instanced property (i.e. an array)
 				UNITY_DEFINE_INSTANCED_PROP(float4x4, _ModelMat) // Make _Color an instanced property (i.e. an array)
@@ -131,14 +132,20 @@ Shader "Unlit/ProjDrawMesh"
 				//fixed4 col = tex2DProj(texture, i.tangent);//tex2D(_MainTex, i.uv);
 				
 				float2 uv = i.screenPos.xy/i.screenPos.w;
-				//uv.y = 1 - uv.y;
+				if(_GlobalInvert == 1){
+					uv.y = 1 - uv.y;
+				}
+				//
 				//o.tangent = float4(uv,0,0);
 
 				//fixed4 col =tex2D(_MainTex, i.tangent.xy / i.tangent.w);
 				fixed4 col = tex2D( _MainTex, uv);//i.tangent.xy );
 				
+				//debug用
+				//fixed4 col = fixed4(uv.x,uv.y,0,1);
+				
 				// apply fog
-				UNITY_APPLY_FOG(i.fogCoord, col);
+				//UNITY_APPLY_FOG(i.fogCoord, col);
 				return col;
 			}
 			ENDCG
